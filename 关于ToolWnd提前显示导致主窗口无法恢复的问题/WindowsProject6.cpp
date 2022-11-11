@@ -1,6 +1,16 @@
 ﻿// WindowsProject6.cpp : 定义应用程序的入口点。
 //
 
+// 有一个bug是当主窗口最小化时，右击任务栏图标弹出messagebox之后，主窗口就再也无法通过点击任务栏图标还原了，永远保持最小化状态，通过spy++可以看到主窗口永远处于最小化状态
+// 关于类似情况的讨论见：https://github.com/microsoft/terminal/issues/13589
+// 但这里这个bug的情况稍有不同，首先这里的写法是来自于Duilib的ShadowWnd，目的是让panelwnd永远跟随mainwnd（原因是串流页目前是非layer窗口，为了让是layer窗口的pannelwnd能够显示在串流页之上而不得已新建了一个窗口并与主窗口保持同步位置）
+// 为了能让panelwnd永远置于mainwnd之上，将panelwnd的父窗口设为了mainwnd，而这样设置了以后，带来了新的特性：当主窗口最小化时，panel窗口会被自动隐藏（通过win32程序模拟可以发现这一特性，以主窗口为父窗口新建的toolwindow当主窗口最小化时，会被windows自动消除WS_VISIBLE属性）
+// 而shadowwnd的原始实现是没有将自己设为父窗口的子窗口的，所以会发生这样一种情况：
+// 当主窗口最小化了，panelwnd会被自动隐藏，但是又因为其跟随实现的代码，会导致在某个时机下，主窗口还没有显示，但panelwnd已经提前显示了
+// 到目前位置，还没有问题，此时如果点击任务栏图标，主窗口一样能显示
+// 但是此时如果又弹出一个以panelwnd为父窗口的窗口时（messagebox），bug就出现了，父窗口再也无法通过点击任务栏来还原了，这里无法知道原因，只能推测是窗口的状态出现了紊乱
+// 解决的方案是：额外判断父窗口是否是最小化状态
+
 #include "framework.h"
 #include "WindowsProject6.h"
 #include <string>
@@ -246,7 +256,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         else if (wParam == SC_CLOSE) {
             ::SetWindowPos(subWnd, NULL, 0, 0, 100, 100, SWP_NOACTIVATE | SWP_SHOWWINDOW);
             //::PostMessage(hWnd, WM_SSSS, NULL, NULL);
-            ::MessageBox(subWnd, NULL, NULL, MB_OK);
+            //::MessageBox(subWnd, NULL, NULL, MB_OK);
             return 0;
         }
         else {
