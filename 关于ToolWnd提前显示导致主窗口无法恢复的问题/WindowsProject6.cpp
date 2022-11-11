@@ -203,7 +203,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				RECT rect = { 0 };
 				::GetClientRect(mainWnd, &rect);
 				MapWindowPoints(mainWnd, HWND_DESKTOP, (POINT*)(&rect), 2);
-				::SetWindowPos(subWnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+				//::SetWindowPos(subWnd, NULL, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOACTIVATE | SWP_SHOWWINDOW);
 				::OutputDebugString(std::format(L"\nSetWindowPos:{:d},{:d},{:d},{:d}", rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top).c_str());
             //}
         }
@@ -244,7 +244,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
         else if (wParam == SC_CLOSE) {
-            //::SetWindowPos(subWnd, NULL, 0, 0, 100, 100, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+            ::SetWindowPos(subWnd, NULL, 0, 0, 100, 100, SWP_NOACTIVATE | SWP_SHOWWINDOW);
             //::PostMessage(hWnd, WM_SSSS, NULL, NULL);
             ::MessageBox(subWnd, NULL, NULL, MB_OK);
             return 0;
