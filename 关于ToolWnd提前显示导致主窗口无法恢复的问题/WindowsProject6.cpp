@@ -256,7 +256,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         else if (wParam == SC_CLOSE) {
             ::SetWindowPos(subWnd, NULL, 0, 0, 100, 100, SWP_NOACTIVATE | SWP_SHOWWINDOW);
             //::PostMessage(hWnd, WM_SSSS, NULL, NULL);
-            //::MessageBox(subWnd, NULL, NULL, MB_OK);
+            ::MessageBox(subWnd, NULL, NULL, MB_OK);
             return 0;
         }
         else {
